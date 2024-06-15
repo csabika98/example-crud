@@ -13,10 +13,10 @@
 
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
 
-#include "oatpp/json/ObjectMapper.hpp""
+#include "oatpp/json/ObjectMapper.hpp"
 
 #include "oatpp/macro/component.hpp"
-
+#include <typeinfo>
 /**
  *  Class which creates and holds Application components and registers components in oatpp::base::Environment
  *  Order of components initialization is from top to bottom
@@ -53,7 +53,7 @@ public:
    *  Create ConnectionProvider component which listens on the port
    */
   OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, serverConnectionProvider)([] {
-    return oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8000, oatpp::network::Address::IP_4});
+    return oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8888, oatpp::network::Address::IP_4});
   }());
   
   /**
@@ -68,7 +68,7 @@ public:
    */
   OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ConnectionHandler>, serverConnectionHandler)([] {
 
-    OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>, router); // get Router component
+    OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>,router); // get Router componenO
     OATPP_COMPONENT(std::shared_ptr<oatpp::web::mime::ContentMappers>, contentMappers); // get ContentMappers component
 
     auto connectionHandler = oatpp::web::server::HttpConnectionHandler::createShared(router);

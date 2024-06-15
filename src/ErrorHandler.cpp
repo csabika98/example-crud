@@ -1,13 +1,12 @@
 
 #include "ErrorHandler.hpp"
 
+
 ErrorHandler::ErrorHandler(const std::shared_ptr<oatpp::data::mapping::ObjectMapper>& objectMapper)
-  : m_objectMapper(objectMapper)
-{}
+    : m_objectMapper(objectMapper) {}
 
 std::shared_ptr<ErrorHandler::OutgoingResponse>
 ErrorHandler::handleError(const Status& status, const oatpp::String& message, const Headers& headers) {
-
   auto error = StatusDto::createShared();
   error->status = "ERROR";
   error->code = status.code;
@@ -15,10 +14,19 @@ ErrorHandler::handleError(const Status& status, const oatpp::String& message, co
 
   auto response = ResponseFactory::createResponse(status, error, m_objectMapper);
 
-  for(const auto& pair : headers.getAll()) {
+  for (const auto& pair : headers.getAll()) {
     response->putHeader(pair.first.toString(), pair.second.toString());
   }
 
   return response;
+}
 
+std::shared_ptr<ErrorHandler::OutgoingResponse>
+ErrorHandler::handleError(const std::exception_ptr& exceptionPtr) {
+  try {
+    std::rethrow_exception(exceptionPtr);
+  } catch (const std::exception& e) {
+    // Log the exception, create an error response, etc.
+    return handleError(Status::CODE_500, e.what(), {});
+  }
 }

@@ -9,6 +9,9 @@
 #include "oatpp/network/Server.hpp"
 
 #include <iostream>
+#include <typeinfo>
+#include <oatpp/web/server/HttpRouter.hpp>
+
 
 void run() {
   

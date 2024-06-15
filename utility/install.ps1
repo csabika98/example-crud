@@ -21,8 +21,8 @@ function Install-Module {
     # Get the number of processors
     $NPROC = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
 
-
-    if ($NPROC -eq $null -or $NPROC -eq 0) {
+    # Properly use $null on the left side of the equality
+    if ($null -eq $NPROC -or 0 -eq $NPROC) {
         $NPROC = 1
     }
 
@@ -36,13 +36,16 @@ function Install-Module {
     New-Item -Path "build" -ItemType Directory | Out-Null
     Set-Location -Path "build"
 
-    # Build commands
-    cmake -DCMAKE_BUILD_TYPE=$BuildType -DOATPP_BUILD_TESTS=$false -DOATPP_SQLITE_AMALGAMATION=$true ..
-    if ($ModuleName -eq 'oatpp-swagger') {
-        cmake --build . --parallel $NPROC
-    } else {
-        cmake --build . --target install -- /m:$NPROC
+    # Customize build commands based on module
+    if ($ModuleName -eq 'oatpp') {
+        cmake -DOATPP_BUILD_TESTS=OFF ..
     }
+    if ($ModuleName -eq 'oatpp-sqlite') {
+        cmake -DOATPP_BUILD_TESTS=OFF -DOATPP_SQLITE_AMALGAMATION=ON ..
+    } else {
+        cmake -DOATPP_BUILD_TESTS=OFF ..
+    }
+    cmake --build . --target install -- /m:$NPROC
 
     Set-Location -Path "../.."
 }
@@ -50,10 +53,12 @@ function Install-Module {
 ##########################################################
 # Invoke the install function for each module
 Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp"
-Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp-swagger" # Fixed the typo here
+Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp-swagger"
 Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp-sqlite"
 
 # Cleanup
 Set-Location -Path ".."
 Remove-Item -Path "tmp" -Recurse -Force
+
+
 

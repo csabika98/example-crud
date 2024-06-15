@@ -1,7 +1,17 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)  # Updated from 3.1
 project(crud)
 
 set(CMAKE_CXX_STANDARD 17)
+
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_MANAGER} /GR")
+endif()
+
+if(MSVC)
+    string(REGEX REPLACE "/EH[a-z]-" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+endif()
+
 
 add_library(crud-lib
         src/controller/StaticController.hpp
@@ -40,16 +50,20 @@ target_link_libraries(crud-lib
 #
 # 1. Make sure that you've built oatpp-sqlite with -DOATPP_SQLITE_AMALGAMATION=ON flag
 # 2. If you are not willing to use SQLite amalgamation then uncomment the following lines:
-#
+
 #find_package(SQLite3 REQUIRED)
-#
+
 #target_link_libraries(crud-lib
-#        PUBLIC SQLite::SQLite3
+#       PUBLIC SQLite::SQLite3
 #)
+set(OATPP_SWAGGER_RES_PATH "C:/Program Files (x86)/oatpp-swagger/include/oatpp-1.4.0/bin/oatpp-swagger/res")
+message(STATUS "Swagger Resources Path: ${OATPP_SWAGGER_RES_PATH}")
+add_definitions(-DOATPP_SWAGGER_RES_PATH="${OATPP_SWAGGER_RES_PATH}")
 
 add_definitions(
         ## define path to swagger-ui static resources folder
-        -DOATPP_SWAGGER_RES_PATH="${oatpp-swagger_INCLUDE_DIRS}/../bin/oatpp-swagger/res"
+        #-DOATPP_SWAGGER_RES_PATH="${oatpp-swagger_INCLUDE_DIRS}/../bin/oatpp-swagger/res"
+
 
         ## SQLite database file
         -DDATABASE_FILE="${CMAKE_CURRENT_SOURCE_DIR}/db.sqlite"
