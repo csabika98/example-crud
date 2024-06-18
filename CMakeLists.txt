@@ -26,7 +26,8 @@ add_library(crud-lib
         src/DatabaseComponent.hpp
         src/SwaggerComponent.hpp
         src/ErrorHandler.cpp
-        src/ErrorHandler.hpp)
+        src/ErrorHandler.hpp
+        src/service/TemplateService.hpp)
 
 ## include directories
 
@@ -83,7 +84,8 @@ endif()
 
 ## add executables
 
-add_executable(crud-exe src/App.cpp)
+add_executable(crud-exe src/App.cpp
+        src/service/TemplateService.hpp)
 target_link_libraries(crud-exe crud-lib)
 
 add_executable(crud-test
@@ -92,7 +94,8 @@ add_executable(crud-test
         test/app/TestDatabaseComponent.hpp
         test/app/TestComponent.hpp
         test/UserControllerTest.hpp
-        test/UserControllerTest.cpp)
+        test/UserControllerTest.cpp
+        src/service/TemplateService.hpp)
 target_link_libraries(crud-test crud-lib)
 
 enable_testing()
