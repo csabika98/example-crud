@@ -56,13 +56,15 @@ target_link_libraries(crud-lib
 #target_link_libraries(crud-lib
 #       PUBLIC SQLite::SQLite3
 #)
-set(OATPP_SWAGGER_RES_PATH "C:/Program Files (x86)/oatpp-swagger/include/oatpp-1.4.0/bin/oatpp-swagger/res")
-message(STATUS "Swagger Resources Path: ${OATPP_SWAGGER_RES_PATH}")
-add_definitions(-DOATPP_SWAGGER_RES_PATH="${OATPP_SWAGGER_RES_PATH}")
+
+# FOR WINDOWS
+#set(OATPP_SWAGGER_RES_PATH "C:/Program Files (x86)/oatpp-swagger/include/oatpp-1.4.0/bin/oatpp-swagger/res")
+#message(STATUS "Swagger Resources Path: ${OATPP_SWAGGER_RES_PATH}")
+#add_definitions(-DOATPP_SWAGGER_RES_PATH="${OATPP_SWAGGER_RES_PATH}")
 
 add_definitions(
         ## define path to swagger-ui static resources folder
-        #-DOATPP_SWAGGER_RES_PATH="${oatpp-swagger_INCLUDE_DIRS}/../bin/oatpp-swagger/res"
+        -DOATPP_SWAGGER_RES_PATH="${oatpp-swagger_INCLUDE_DIRS}/../bin/oatpp-swagger/res"
 
 
         ## SQLite database file
