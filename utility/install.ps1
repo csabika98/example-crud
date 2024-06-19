@@ -3,6 +3,10 @@ Param(
     [string]$BUILD_TYPE = "Debug"
 )
 
+# Path to the compilers and make tool
+$mingwBinPath = "C:\msys64\mingw64\bin"
+#$installPrefix = "C:\Users\CsabaSallai\oatpp-install"  # Set your user-space installation prefix
+
 # Clean up old temporary directory
 Remove-Item -Path "tmp" -Recurse -Force -ErrorAction SilentlyContinue
 
@@ -36,16 +40,27 @@ function Install-Module {
     New-Item -Path "build" -ItemType Directory | Out-Null
     Set-Location -Path "build"
 
-    # Customize build commands based on module
-    if ($ModuleName -eq 'oatpp') {
-        cmake -DOATPP_BUILD_TESTS=OFF ..
-    }
+    # Set the C and C++ compilers and add the path to the environment
+    $env:PATH = "$mingwBinPath;$env:PATH"
+    $makeProgram = "$mingwBinPath\mingw32-make.exe"
+
+    $cmakeCommand = @()
+    $cmakeCommand += "-G"
+    $cmakeCommand += "MinGW Makefiles"
+    $cmakeCommand += "-DCMAKE_C_COMPILER=$mingwBinPath\x86_64-w64-mingw32-gcc.exe"
+    $cmakeCommand += "-DCMAKE_CXX_COMPILER=$mingwBinPath\x86_64-w64-mingw32-g++.exe"
+    $cmakeCommand += "-DCMAKE_MAKE_PROGRAM=$makeProgram"
+    $cmakeCommand += "-DCMAKE_BUILD_TYPE=$BuildType"
+    #$cmakeCommand += "-DCMAKE_INSTALL_PREFIX=$installPrefix"
     if ($ModuleName -eq 'oatpp-sqlite') {
-        cmake -DOATPP_BUILD_TESTS=OFF -DOATPP_SQLITE_AMALGAMATION=ON ..
-    } else {
-        cmake -DOATPP_BUILD_TESTS=OFF ..
+        $cmakeCommand += "-DOATPP_SQLITE_AMALGAMATION=ON"
     }
-    cmake --build . --target install -- /m:$NPROC
+    $cmakeCommand += "-DOATPP_BUILD_TESTS=OFF"
+    $cmakeCommand += ".."
+
+    cmake $cmakeCommand
+
+    cmake --build . --target install -- -j $NPROC
 
     Set-Location -Path "../.."
 }
@@ -53,12 +68,22 @@ function Install-Module {
 ##########################################################
 # Invoke the install function for each module
 Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp"
+
+# Set CMAKE_PREFIX_PATH for subsequent modules
+$env:CMAKE_PREFIX_PATH = "$installPrefix;$env:CMAKE_PREFIX_PATH"
+
 Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp-swagger"
 Install-Module -BuildType $BUILD_TYPE -ModuleName "oatpp-sqlite"
 
 # Cleanup
 Set-Location -Path ".."
 Remove-Item -Path "tmp" -Recurse -Force
+
+
+
+
+
+
 
 
 
