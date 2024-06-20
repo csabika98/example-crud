@@ -27,7 +27,7 @@ public:
 
     static std::string loadTemplate(const std::string& templateName) {
         std::string rootDir = getProjectRootDirectory();
-        std::string filePath = rootDir + "/src/templates/" + templateName;
+        std::string filePath = rootDir + "/templates/" + templateName;
 
 
         std::cout << "Trying to load template file: " << filePath << std::endl;

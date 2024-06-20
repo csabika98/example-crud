@@ -41,7 +41,7 @@ public:
     ENDPOINT("GET", "/*", staticFile,
              REQUEST(std::shared_ptr<IncomingRequest>, request)) {
         std::string rootDir = TemplateService::getProjectRootDirectory();
-        std::string filePath = rootDir + "/src/templates/" + std::string(*request->getPathTail());
+        std::string filePath = rootDir + std::string(*request->getPathTail());
         return serveStaticFile(filePath);
     }
 
