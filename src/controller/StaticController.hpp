@@ -27,7 +27,7 @@ public:
 
     ENDPOINT("GET", "/", root) {
         try {
-            std::string html = TemplateService::loadTemplate("index.html");
+            std::string html = TemplateService::loadTemplate("example.html");
             std::unordered_map<std::string, std::string> values = {{"value", "Hello from backend"}};
             std::string renderedHtml = TemplateService::renderTemplate(html, values);
             auto response = createResponse(Status::CODE_200, renderedHtml.c_str());
